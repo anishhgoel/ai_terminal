@@ -5,4 +5,4 @@
 2) bufio.Reader offers advanced input handling.
 3) bufio.Reader gives more control over error handling and input processing as compared to fmt.Scan.
 
-Since users will likely enter multi-word commands or instructions, bufio.Reader is the better choice# ai_terminal
+Since users will likely enter multi-word commands or instructions, bufio.Reader is the better choice
