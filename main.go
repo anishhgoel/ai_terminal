@@ -44,6 +44,6 @@ func executeCommand(command string) {
 
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println("error executing command: %v\n", err)
+		fmt.Printf("error executing command: %v\n", err)
 	}
 }
