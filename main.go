@@ -13,6 +13,8 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
+var commandHistory []string
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -31,14 +33,38 @@ func main() {
 		}
 
 		input = strings.TrimSpace(input)
+
+		if input != "" && input != ":ai" && input != ":normal" && input != ":exit" {
+			commandHistory = append(commandHistory, input)
+		}
+		if input == ":history" {
+			if len(commandHistory) == 0 {
+				fmt.Println("No commands in history.")
+			} else {
+				fmt.Println("Command History:")
+				for i, cmd := range commandHistory {
+					fmt.Printf("%d: %s\n", i+1, cmd)
+				}
+			}
+			continue
+		}
+
+		if input == ":clearhistory" {
+			commandHistory = []string{}
+			fmt.Println("Command history cleared.")
+			continue
+		}
+
 		fmt.Println("You entered: ", input)
 
 		if input == ":ai" {
 			mode = "ai"
-			fmt.Println("Switched to AI mode")
+			fmt.Println("Switched to AI mode.")
+			continue
 		} else if input == ":normal" {
 			mode = "normal"
 			fmt.Println("Switched to Normal mode")
+			continue
 		} else if input == ":exit" {
 			fmt.Println("Goodbye")
 			break
@@ -97,7 +123,7 @@ func changeDirectory(args []string) {
 		fmt.Printf("Error changing directory: %v \n", err)
 		return
 	}
-	fmt.Printf("Changed directory to %s", dir)
+	fmt.Printf("Changed directory to %s\n", dir)
 
 }
 
