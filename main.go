@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/agnivade/levenshtein"
 )
 
 func main() {
@@ -81,7 +83,7 @@ func changeDirectory(args []string) {
 
 }
 
-func suggestSimilarDirectories(dir string) {
+func suggestSimilarDirectories(inputDir string) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Error getting the current directory %v\n", err)
@@ -93,11 +95,23 @@ func suggestSimilarDirectories(dir string) {
 		fmt.Printf("Error getting the files of current direcotry %v\n", err)
 		return
 	}
-	fmt.Println("Did you mean: ")
+	foundSuggestions := false
+	fmt.Println("Did you mean:")
 	for _, file := range files {
 		if file.IsDir() {
-			fmt.Printf(" - %s\n", file.Name())
+			//calculating the levenshtein distance between current file name and input directory name by user
+			distance := levenshtein.ComputeDistance(file.Name(), inputDir)
+			maxLen := float64(max(len(file.Name()), len(inputDir))) //will use this to normalize as longer string name will have higher levenshtein distance
+			similarity := 1 - (float64(distance) / maxLen)
+
+			if similarity > 0.5 {
+				fmt.Printf(" - %s\n", file.Name())
+				foundSuggestions = true
+			}
+
 		}
 	}
-
+	if !foundSuggestions {
+		fmt.Println("No similar directories found")
+	}
 }
